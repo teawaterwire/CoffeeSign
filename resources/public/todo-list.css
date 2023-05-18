@@ -20,6 +20,16 @@ body {
   margin-top: 20px;
 }
 
+.agreement button {
+  display: block;
+  margin: auto;
+  cursor: pointer;
+  padding: 1rem 2rem;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  box-shadow: 3px 3px 4px;
+}
+
 .handwritten {
   font-family: "Homemade Apple", cursive;
   font-size: 1.4rem;
@@ -32,4 +42,5 @@ input[type="text"] {
   min-width: 20rem;
   border: 0;
   border-bottom: 1px gray dashed;
+  background-color: beige;
 }

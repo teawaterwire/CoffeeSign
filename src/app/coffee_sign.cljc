@@ -1,22 +1,44 @@
 (ns app.coffee-sign
-  (:require [hyperfiddle.electric :as e]
-            [hyperfiddle.electric-dom2 :as dom]
-            [hyperfiddle.electric-ui4 :as ui]))
+  (:require
+   #?(:clj [datascript.core :as d])
+   [clojure.string :as str]
+   [hyperfiddle.electric :as e]
+   [hyperfiddle.electric-dom2 :as dom]
+   [hyperfiddle.electric-ui4 :as ui]))
+
+#?(:clj (defonce !conn (d/create-conn {})))
+(e/def db)
 
 #?(:cljs (defn today->str []
            (-> (js/Date.) 
                (.toLocaleDateString "en-US" 
                                     (clj->js {:day "numeric" :weekday "long" :month "long" :year "numeric"})))))
 
+(defn rand-str [len]
+  (str/lower-case (apply str (take len (repeatedly #(char (+ (rand 26) 65)))))))
+
 (e/defn Signatures [!inputs]
   (dom/div
    (dom/text "Party A: ")
-   (ui/input (:party-a !inputs) (e/fn [v] (swap! !inputs assoc :party-a v))
+   (ui/input (:contract/party-b !inputs) (e/fn [v] (swap! !inputs assoc :contract/party-b v))
                           (dom/props {:class "handwritten" :type "text" :placeholder "your name"})))
   (dom/div
    (dom/text "Party B: ")
-   (ui/input (:party-a !inputs) (e/fn [v] (swap! !inputs assoc :party-a v))
+   (ui/input (:contract/party-b !inputs) (e/fn [v] (swap! !inputs assoc :contract/party-b v))
                           (dom/props {:class "handwritten" :type "text" :placeholder "the other person"}))))
+
+(e/defn GenerateButton [inputs]
+  (let [contract (assoc inputs 
+                        :contract/today (today->str)
+                        :contract/url (rand-str 15))]
+    (dom/div
+     (dom/button
+      (dom/text "GENERATE CONTRACT")
+      (dom/on "click"
+              (e/fn [_e]
+                (e/server
+                 (d/transact! !conn [contract])
+                 nil)))))))
 
 (e/defn Agreement []
   (let [!inputs (atom {})
@@ -41,13 +63,13 @@
        (dom/text "Meeting Details:")
        (dom/ol (dom/props {:type "i"})
                (dom/li (dom/text "Date:")
-                       (ui/input (:date inputs) (e/fn [v] (swap! !inputs assoc :date v))
+                       (ui/input (:contract/date inputs) (e/fn [v] (swap! !inputs assoc :contract/date v))
                                  (dom/props {:class "handwritten" :type "text" :placeholder "17/05/2024"})))
                (dom/li (dom/text "Time:")
-                       (ui/input (:time inputs) (e/fn [v] (swap! !inputs assoc :time v))
+                       (ui/input (:contract/time inputs) (e/fn [v] (swap! !inputs assoc :contract/time v))
                                  (dom/props {:class "handwritten" :type "text" :placeholder "2pm"})))
                (dom/li (dom/text "Location:")
-                       (ui/input (:location inputs) (e/fn [v] (swap! !inputs assoc :location v))
+                       (ui/input (:contract/location inputs) (e/fn [v] (swap! !inputs assoc :contract/location v))
                                  (dom/props {:class "handwritten" :type "text" :placeholder "Les Deux Magots"})))))
       (dom/li
        (dom/text "Responsibilities:")
@@ -69,7 +91,7 @@
        (dom/ol (dom/props {:type "i"})
                (dom/li
                 (dom/text "In the event of a failure by either Party to attend the coffee meeting at the agreed-upon time without providing a valid and timely notice of cancellation or rescheduling, the defaulting Party shall be liable to pay a penalty of ")
-                (ui/input (:penalty inputs) (e/fn [v] (swap! !inputs assoc :penalty v))
+                (ui/input (:contract/penalty inputs) (e/fn [v] (swap! !inputs assoc :contract/penalty v))
                           (dom/props {:class "handwritten" :type "text" :placeholder "1 euro"}))
                 (dom/text "to the non-defaulting Party."))))
       (dom/li
@@ -83,15 +105,41 @@
      (dom/br)
      (dom/text "IN WITNESS WHEREOF, the Parties hereto have executed this Binding Agreement as of the Effective Date first above written.")
      (dom/br)
-     (Signatures. !inputs))))
+     (Signatures. !inputs)
+     (GenerateButton. inputs))))
+
+#?(:clj
+   (defn contracts [db]
+     (sort
+       (d/q '[:find [?e ...]
+              :where
+              [?e :contract/time]]
+            db))))
    
+(e/defn TableView []
+  (dom/table
+   (dom/props {:class "hyperfiddle"})
+   (e/server
+    (e/for [id (contracts db)]
+      (let [!e (d/entity db id)]
+        (e/client
+         (dom/tr
+          (dom/td (dom/text id))
+          (dom/td (dom/text (e/server (:contract/url !e))))
+          (dom/td (dom/text (e/server (:contract/today !e))))
+          (dom/td (dom/text (e/server (:contract/date !e))))
+          (dom/td (dom/text (e/server (:contract/time !e))))
+          (dom/td (dom/text (e/server (:contract/location !e)))))))))))
 
 (e/defn CoffeeSign []
-  (e/client 
-   (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
-   (dom/h1 (dom/text "CoffeeSign"))
-   (dom/h2 (dom/text "Meeting for coffee? Send them a contract."))
-   (Agreement.)
-   (dom/h4 (dom/text "Made by " )
-           (dom/a (dom/props {:href "https://twitter.com/teawaterwire"}) 
-                                       (dom/text "teawaterwire")))))
+  (e/server
+   (binding [db (e/watch !conn)]
+     (e/client 
+      (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
+      (dom/h1 (dom/text "CoffeeSign"))
+      (dom/h2 (dom/text "Meeting for coffee? Send them a contract."))
+;;       (TableView.)
+      (Agreement.)
+      (dom/h4 (dom/text "Made by " )
+              (dom/a (dom/props {:href "https://twitter.com/teawaterwire"}) 
+                     (dom/text "teawaterwire")))))))
