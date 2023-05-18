@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Mr+Dafoe&family=Roboto+Serif:wght@100&display=swap");
 
+h1:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 body {
   font-family: "IBM Plex Sans", sans-serif;
   font-weight: 400;
@@ -30,6 +35,15 @@ body {
   box-shadow: 3px 3px 4px;
 }
 
+.agreement h2 {
+  cursor: pointer;
+  text-align: center;
+}
+
+.agreement h2:hover {
+  text-decoration: underline;
+}
+
 .handwritten {
   font-family: "Homemade Apple", cursive;
   font-size: 1.4rem;
@@ -43,4 +57,20 @@ input[type="text"] {
   border: 0;
   border-bottom: 1px gray dashed;
   background-color: beige;
+  color: black;
+}
+
+input[type="text"]::placeholder {
+  color: #afafaf;
+}
+
+.signed {
+  border: 1px dashed gray;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  font-weight: bold;
+}
+
+.signed input {
+  margin-right: 0.5rem;
 }
