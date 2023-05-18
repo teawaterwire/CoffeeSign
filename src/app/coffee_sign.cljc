@@ -70,12 +70,12 @@
                (dom/li
                 (dom/text "In the event of a failure by either Party to attend the coffee meeting at the agreed-upon time without providing a valid and timely notice of cancellation or rescheduling, the defaulting Party shall be liable to pay a penalty of ")
                 (ui/input (:penalty inputs) (e/fn [v] (swap! !inputs assoc :penalty v))
-                          (dom/props {:class "handwritten" :type "text" :placeholder "1 eth"}))
+                          (dom/props {:class "handwritten" :type "text" :placeholder "1 euro"}))
                 (dom/text "to the non-defaulting Party."))))
       (dom/li
        (dom/text "Termination:")
        (dom/ol (dom/props {:type "i"})
-               (dom/li (dom/text "This Agreement shall terminate upon the completion of the coffee meeting at the agreed-upon time or upon mutual agreement of the Parties to terminate the meeting earlier."))))
+               (dom/li (dom/text "This Agreement may be terminated by mutual agreement of the Parties."))))
       (dom/li
        (dom/text "Entire Agreement:")
        (dom/ol (dom/props {:type "i"})
