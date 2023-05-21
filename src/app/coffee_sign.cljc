@@ -228,6 +228,6 @@
                        (dom/text "Electric"))
                 (dom/text " • ")
                 (dom/text "Open ")
-                (dom/a (dom/props {:href "https://github.com/teawaterwire/CoffeeSign"
+                (dom/a (dom/props {:href "https://github.com/teawaterwire/CoffeeSign/blob/main/src/app/coffee_sign.cljc"
                                    :target "_blank"}) 
                        (dom/text "source"))))))))
