@@ -212,7 +212,7 @@
    (binding [db (e/watch !conn)]
      (e/client 
       (let [route ghistory/path]
-        (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
+        ;; (dom/link (dom/props {:rel :stylesheet :href "/todo-list.css"}))
         (dom/h1 (ghistory/Link. "/" "CoffeeSign"))
         (dom/h2 (dom/text "Meeting for coffee? Sign a contract."))
         ;; (TableView.)
