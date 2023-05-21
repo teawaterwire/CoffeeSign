@@ -57,13 +57,14 @@ body {
 
 input[type="text"] {
   padding: 0 1rem;
-  text-indent: 0.5rem;
+  text-indent: 0.7rem;
   margin: 1rem 0.2rem;
   min-width: 15rem;
   border: 0;
   border-bottom: 1px gray dashed;
   background-color: beige;
   color: black;
+  -webkit-text-fill-color: black;
 }
 
 input[type="text"]::placeholder {
