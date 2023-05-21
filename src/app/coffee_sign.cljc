@@ -31,7 +31,10 @@
   (let [url (if (str/blank? url-from-path) (rand-str 15) url-from-path)
         contract (assoc inputs
                         :contract/today (today->str)
-                        :contract/url url)]
+                        :contract/url url)
+        disabled? (->> (map (partial keyword "contract") [:date :time :location :penalty :party-a :party-b])
+                       (every? inputs)
+                       (not))]
     (dom/div
      (e/server
       (let [id (find-contract db url)
@@ -39,6 +42,7 @@
         (if (not !contract)
           (e/client
            (dom/button
+            (dom/props {:disabled disabled?})
             (dom/text "GENERATE CONTRACT")
             (dom/on "click"
                     (e/fn [_e]
@@ -51,7 +55,7 @@
                                 :target "_blank"})
                     (dom/h2 (dom/text "GO TO CONTRACT"))))
             (if (not (:contract/signed? !contract))
-              (e/client 
+              (e/client
                (dom/h2 (dom/text "Party B has to sign")))
               (e/client (dom/div (dom/style {:text-align "center" :font-size "4rem"}) (dom/text "🤝")))))))))))
 
@@ -84,7 +88,7 @@
                    (e/server
                     (if !contract
                       (e/client
-                       (dom/li (dom/text "Location:")
+                       (dom/li (dom/text "Date:")
                                (ui/input (e/server (:contract/date !contract)) (e/fn [_v])
                                          (dom/props {:class "handwritten" :type "text" :disabled true})))
                        (dom/li (dom/text "Time:")
