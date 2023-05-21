@@ -64,11 +64,14 @@ input[type="text"] {
   border-bottom: 1px gray dashed;
   background-color: beige;
   color: black;
-  -webkit-text-fill-color: black;
 }
 
 input[type="text"]::placeholder {
   color: #afafaf;
+}
+
+input[type="text"]:disabled {
+  -webkit-text-fill-color: black;
 }
 
 .signed {
