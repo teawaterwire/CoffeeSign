@@ -53,7 +53,7 @@
             (if (not (:contract/signed? !contract))
               (e/client 
                (dom/h2 (dom/text "Party B has to sign")))
-              (e/client (dom/h2 (dom/text "🤝")))))))))))
+              (e/client (dom/div (dom/style {:text-align "center" :font-size "4rem"}) (dom/text "🤝")))))))))))
 
 (e/defn Agreement [url]
   (let [!inputs (atom {})
@@ -220,4 +220,14 @@
         (dom/h4 (dom/text "Made by " )
                 (dom/a (dom/props {:href "https://twitter.com/teawaterwire"
                                    :target "_blank"}) 
-                       (dom/text "teawaterwire"))))))))
+                       (dom/text "teawaterwire"))
+                (dom/text " • ")
+                (dom/text "Built with ")
+                (dom/a (dom/props {:href "https://github.com/hyperfiddle/electric"
+                                   :target "_blank"}) 
+                       (dom/text "Electric"))
+                (dom/text " • ")
+                (dom/text "Open ")
+                (dom/a (dom/props {:href "https://github.com/teawaterwire/CoffeeSign"
+                                   :target "_blank"}) 
+                       (dom/text "source"))))))))
